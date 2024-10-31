@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ace1fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button{
+            background-color: rgb(83, 240, 83);
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        .lista-produtos-container {
+            max-height: 200px; 
+            height:199px;
+            overflow-y: scroll; 
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gerenciamento de Estoque</h2>
+
+        <h3>Adicionar Produto</h3>
+        <input type="text" id="nome" placeholder="Nome do Produto">
+        <input type="number" id="quantidade" placeholder="Quantidade">
+        <input type="text" id="tipo" placeholder="Tipo">
+        <button onclick="adicionarProduto()">Adicionar Produto</button>
+
+        <h3>Retirar Produto</h3>
+        <input type="text" id="retirarNome" placeholder="Nome do Produto">
+        <input type="number" id="retirarQuantidade" placeholder="Quantidade a Retirar">
+        <button onclick="retirarProduto()">Retirar Produto</button>
+       
+        <div class="lista-produtos-container">
+        <h3>Estoque Atual</h3>
+        <table>
+           
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Quantidade</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody id="estoqueTabela">
+                <!-- Produtos serão inseridos aqui -->
+            </tbody>
+        </table> 
+        </div>
+    </div>
+   
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+/* Estilos da barra lateral */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #2b3e50;
+    color: white;
+    height: 100vh;
+    padding-top: 20px;
+    box-sizing: border-box;
+}
+
+.sidebar h2 {
+    text-align: center;
+    color: #fff;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 15px;
+    text-align: center;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar ul li a:hover {
+    background-color: #1a2d3a;
+    display: block;
+}
+
+.main-content {
+    padding: 20px;
+    width: 100%;
+    background-color: #fff;
+}
+
+h1 {
+    color: #2b3e50;
+}
+
+/* Estilos do formulário */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 600px;
+    margin: auto;
+}
+
+label {
+    color: #2b3e50;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="date"], select, textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    flex: 1;
+}
+
+.radio-container {
+    display: flex;
+    gap: 10px;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button.cancelar {
+    background-color: #ccc;
+    color: #000;
+}
+
+button.salvar {
+    background-color: #3498db;
+    color: #fff;
+}
