@@ -69,7 +69,9 @@ Acesse no navegador: `http://127.0.0.1:5000`
 ## 📌 Melhorias Futuras
 - 📊 Geração de relatórios e gráficos.
 - 📧 Notificações por e-mail.
-- 📱 Versão responsiva para mobile.
+- 📈 Integração com APIs de terceiros.
+
+
 
 ---
 **Desenvolvido por:** [Iverton Emiquison](https://github.com/IVERTON-EMIQUISON) 🚀
