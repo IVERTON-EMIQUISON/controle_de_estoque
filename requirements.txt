@@ -7,3 +7,4 @@ pandas==1.5.3
 Flask==2.3.3  
 SQLAlchemy==1.4.47  
 gunicorn
+Flask-Login
