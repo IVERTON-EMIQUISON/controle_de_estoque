@@ -1,0 +1,11 @@
+plaintext
+# Arquivos Python compilados  
+__pycache__/  
+*.pyc  
+*.pyo  
+*.pyd  
+
+# Ambiente virtual  
+venv/  
+env/  
+.env  

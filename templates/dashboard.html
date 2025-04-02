@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ace1fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input, button {
+            margin: 5px 0;
+            padding: 10px;
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: rgb(83, 240, 83);
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        .lista-produtos-container {
+            max-height: 200px; 
+            overflow-y: scroll; 
+        }
+        .btn-remover {
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-editar {
+            background-color: orange;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .rodape {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+        .rodape a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        /* Sidebar (menu lateral) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -200px; /* Esconde a sidebar */
+            width: 200px;
+            height: 100vh;
+            background-color: #2b3e50;
+            color: white;
+            padding-top: 20px;
+            transition: left 0.3s ease;
+        }
+
+        .sidebar.active {
+            left: 0; /* Exibe a sidebar */
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+        .sidebar ul li a:hover {
+            width: 100%;
+            background-color: #555;
+            height: 100%;
+        }
+
+        .menu-btn {  
+            position: fixed;  
+            top: 10px;  
+            right: 10px; /* Muda de 'left' para 'right' */  
+            background-color: #2b3e50;  
+            color: white;  
+            border: none;  
+            padding: 10px 15px;  
+            font-size: 18px;  
+            cursor: pointer;  
+            border-radius: 5px;  
+            width: 70px;  
+        }  
+
+        @media (min-width: 768px) {
+            .menu-btn {
+                display: none; /* Esconde o botão em telas grandes */
+            }
+            .sidebar {
+                left: 0; /* Mantém o menu fixo */
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-btn" onclick="toggleMenu()"> Menu</button>
+
+    <div class="sidebar" id="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Gerencia Estoque</a></li>
+            <li><a href="{{ url_for('logout') }}">Sair</a></li>
+        </ul>
+    </div>
+    <h2>Bem-vindo, {{ current_user.username }}!</h2>
+    <div class="container">
+       
+        <h2>Gerenciamento de Estoque</h2>
+
+        <h3>Adicionar Produto</h3>
+        <input type="text" id="nome" placeholder="Nome do Produto">
+        <input type="number" id="quantidade" placeholder="Quantidade" min="1">
+        <input type="text" id="tipo" placeholder="Tipo">
+        <button onclick="adicionarProduto()">Adicionar Produto</button>
+
+        <h3>Retirar um produto do Estoque</h3>
+        <input type="text" id="retirarNome" placeholder="Nome do Produto">
+        <input type="number" id="retirarQuantidade" placeholder="Quantidade a Retirar" min="1">
+        <button onclick="retirarProduto()">Retirar Produto</button>
+        
+        <h3>Estoque Atual</h3>
+        <div class="lista-produtos-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Quantidade</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="estoqueTabela">
+                    <!-- Produtos serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+        <div class="rodape" >
+            <p>Desenvolvido por  <a href="https://github.com/IVERTON-EMIQUISON"> IVERTON EMIQUISON</a> &copy; 2025 - Todos os direitos reservados.</p>
+        </div>
+    </div>
+
+    <script> 
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        const API_URL = "http://127.0.0.1:5000";  // URL do Flask
+        // Verificar se a resposta do servidor é válida
+        async function verificarResposta(resposta) {
+            if (!resposta.ok) {  
+                try {
+                    const erro = await resposta.json();
+                    throw new Error(erro.erro || "Erro desconhecido.");
+                } catch (e) {
+                    throw new Error("Erro ao processar a resposta do servidor.");
+                }
+            }
+        }
+        // Atualizar tabela com dados do backend
+        async function carregarProdutos() {
+            const resposta = await fetch(`${API_URL}/produtos`);
+            const produtos = await resposta.json();
+
+            const tabela = document.getElementById('estoqueTabela');
+            tabela.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const linha = document.createElement('tr');
+                linha.innerHTML = `
+                    <td>${produto.nome}</td>
+                    <td>${produto.quantidade}</td>
+                    <td>${produto.tipo}</td>
+                    <td>
+                        <button class="btn-remover" onclick="removerProduto(${produto.id})">Excluir</button>
+                    </td>
+                `;
+                tabela.appendChild(linha);
+            });
+        }
+        carregarProdutos();
+
+        // Adicionar produto ao banco de dados
+        async function adicionarProduto() {
+            const nome = document.getElementById('nome').value;
+            const quantidade = document.getElementById('quantidade').value;
+            const tipo = document.getElementById('tipo').value;
+
+            if (!nome || !quantidade || !tipo) {
+                alert("Preencha todos os campos.");
+                return;
+            }
+
+            await fetch(`${API_URL}/adicionar`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, quantidade, tipo })
+            });
+
+            carregarProdutos();
+        }
+
+        // Editar produto no banco de dados
+        async function editarProduto(id) {
+            const novaQuantidade = prompt("Digite a nova quantidade:");
+
+            if (novaQuantidade !== null && !isNaN(novaQuantidade)) {
+                await fetch(`${API_URL}/editar/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ quantidade: novaQuantidade })
+                });
+
+                carregarProdutos();
+            }
+        }
+        // Retirar produto do banco de dados
+        async function retirarProduto() {  
+            const nome = document.getElementById('retirarNome').value;  
+            const quantidade = document.getElementById('retirarQuantidade').value;  
+        
+            if (!nome || !quantidade || isNaN(quantidade) || quantidade <= 0) {  
+                alert("Preencha todos os campos corretamente.");  
+                return;  
+            }  
+        
+            try {  
+                const resposta = await fetch(`${API_URL}/retirar/${nome}`, {  
+                    method: "PUT",  
+                    headers: { "Content-Type": "application/json" },  
+                    body: JSON.stringify({ quantidade: parseInt(quantidade) }) // Envie a quantidade desejada no corpo  
+                });  
+        
+                if (!resposta.ok) {  
+                    const erro = await resposta.json(); // Obtenha a mensagem de erro da resposta  
+                    throw new Error(erro.erro);  
+                }  
+                await carregarProdutos();  
+              
+            } catch (error) {  
+                alert(`Erro: ${error.message}`);  
+            }
+            carregarProdutos();  
+        }  
+
+        // Remover produto do banco de dados
+        async function removerProduto(id) {
+            if (confirm("Tem certeza que deseja remover este produto?")) {
+                await fetch(`${API_URL}/remover/${id}`, { method: "DELETE" });
+                carregarProdutos();
+            }
+        }
+
+        // Atualizar tabela ao carregar a página
+        carregarProdutos();
+
+    </script>
+</body>
+</html>
