@@ -188,7 +188,8 @@
             document.getElementById('sidebar').classList.toggle('active');
         }
 
-        const API_URL = "http://127.0.0.1:5000";  // URL do Flask
+       const API_URL = "https://controle-de-estoque-api.onrender.com"; // URL correta do Flask
+
         // Verificar se a resposta do servidor é válida
         async function verificarResposta(resposta) {
             if (!resposta.ok) {  
