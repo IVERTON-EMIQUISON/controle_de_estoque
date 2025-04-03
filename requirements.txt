@@ -9,3 +9,4 @@ SQLAlchemy==1.4.47
 gunicorn
 Flask-Login
 Werkzeug 
+flask-cors
