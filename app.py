@@ -5,9 +5,16 @@ from werkzeug.security import generate_password_hash, check_password_hash # type
 from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
-# Configuração do CORS para permitir requisições do frontend no Render
-CORS(app, resources={r"/*": {"origins": "https://controle-de-estoque-wl10.onrender.com"}})
+# Permite CORS de qualquer origem e para qualquer método
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+    
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///estoque.db'  # Armazena no /tmp/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secreta_chave_aqui'  # Defina uma chave secreta
