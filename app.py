@@ -5,7 +5,9 @@ from werkzeug.security import generate_password_hash, check_password_hash # type
 from flask_cors import CORS # type: ignore
 
 app = Flask(__name__)
-CORS(app) # Isso libera o CORS para todas as rotas
+# Configuração do CORS para permitir requisições do frontend no Render
+CORS(app, resources={r"/*": {"origins": "https://controle-de-estoque-wl10.onrender.com"}})
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///estoque.db'  # Armazena no /tmp/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secreta_chave_aqui'  # Defina uma chave secreta
@@ -13,6 +15,7 @@ app.secret_key = 'secreta_chave_aqui'  # Defina uma chave secreta
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+
 
 # Modelo de Usuário
 class User(UserMixin, db.Model):
@@ -188,103 +191,6 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///estoque.db'
-# app.config['SECRET_KEY'] = 'minha_chave_secreta'
-
-# db = SQLAlchemy(app)
-# bcrypt = Bcrypt(app)
-# login_manager = LoginManager(app)
-# login_manager.login_view = 'login'
-
-# # Modelo de Usuário
-# class Usuario(UserMixin, db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(100), unique=True, nullable=False)
-#     password_hash = db.Column(db.String(128), nullable=False)
-
-# # Modelo de Produto
-# class Produto(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     nome = db.Column(db.String(100), nullable=False)
-#     quantidade = db.Column(db.Integer, nullable=False)
-#     tipo = db.Column(db.String(50), nullable=False)
-#     usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     return Usuario.query.get(int(user_id))
-
-# # Rota de Registro
-# @app.route('/registro', methods=['POST'])
-# def registro():
-#     data = request.json
-#     username = data['username']
-#     password = data['password']
-
-#     if Usuario.query.filter_by(username=username).first():
-#         return jsonify({'erro': 'Usuário já existe!'}), 400
-
-#     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-#     novo_usuario = Usuario(username=username, password_hash=hashed_password)
-#     db.session.add(novo_usuario)
-#     db.session.commit()
-    
-#     return jsonify({'mensagem': 'Usuário registrado com sucesso!'})
-
-# # Rota de Login
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.json
-#     username = data['username']
-#     password = data['password']
-    
-#     usuario = Usuario.query.filter_by(username=username).first()
-#     if usuario and bcrypt.check_password_hash(usuario.password_hash, password):
-#         login_user(usuario)
-#         return jsonify({'mensagem': 'Login bem-sucedido!', 'usuario': usuario.username})
-    
-#     return jsonify({'erro': 'Credenciais inválidas!'}), 401
-
-# # Rota de Logout
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     return jsonify({'mensagem': 'Logout realizado com sucesso!'})
-
-# # Rota para obter produtos do usuário autenticado
-# @app.route('/produtos')
-# @login_required
-# def listar_produtos():
-#     produtos = Produto.query.filter_by(usuario_id=current_user.id).all()
-#     return jsonify([{'id': p.id, 'nome': p.nome, 'quantidade': p.quantidade, 'tipo': p.tipo} for p in produtos])
-
-# # Rota para adicionar produtos
-# @app.route('/adicionar', methods=['POST'])
-# @login_required
-# def adicionar_produto():
-#     data = request.json
-#     novo_produto = Produto(
-#         nome=data['nome'],
-#         quantidade=data['quantidade'],
-#         tipo=data['tipo'],
-#         usuario_id=current_user.id
-#     )
-#     db.session.add(novo_produto)
-#     db.session.commit()
-#     return jsonify({'mensagem': 'Produto adicionado!'})
-
-# # Rota para remover produtos
-# @app.route('/remover/<int:id>', methods=['DELETE'])
-# @login_required
-# def remover_produto(id):
-#     produto = Produto.query.get(id)
-#     if produto and produto.usuario_id == current_user.id:
-#         db.session.delete(produto)
-#         db.session.commit()
-#         return jsonify({'mensagem': 'Produto removido!'})
-#     return jsonify({'erro': 'Produto não encontrado ou não autorizado!'}), 403
 
 # if __name__ == '__main__':
 #     with app.app_context():
