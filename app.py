@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, flash, jsonify # type: ignore
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user, login_manager # type: ignore
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash # type: ignore
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/estoque.db'  # Armazena no /tmp/
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///estoque.db'  # Armazena no /tmp/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secreta_chave_aqui'  # Defina uma chave secreta
 
